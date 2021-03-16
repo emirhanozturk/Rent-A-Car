@@ -1,4 +1,8 @@
 ﻿using Business.Abstract;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -16,30 +20,33 @@ namespace Business.Concrete
         {
             _colorDal = colorDal;
         }
-
-        public void Add(Color color)
+        [ValidationAspect(typeof(ColorValidator))]
+        public IResult Add(Color color)
         {
             _colorDal.Add(color);
+            return new SuccessResult();
         }
-
-        public void Delete(Color color)
+        [ValidationAspect(typeof(ColorValidator))]
+        public IResult Delete(Color color)
         {
             _colorDal.Delete(color);
+            return new SuccessResult();
         }
 
-        public List<Color> GetAll()
+        public IDataResult<List<Color>> GetAll()
         {
-            return _colorDal.GetAll();
+            return new SuccessDataResult<List<Color>>(_colorDal.GetAll());
         }
 
-        public Color GetCarsByColorId(int ColorId)
+        public IDataResult<Color> GetById(int ColorId)
         {
-            return _colorDal.Get(p => p.ColorId == ColorId);
+            return new SuccessDataResult<Color>(_colorDal.Get(p => p.ColorId == ColorId));
         }
-
-        public void Update(Color color)
+        [ValidationAspect(typeof(ColorValidator))]
+        public IResult Update(Color color)
         {
             _colorDal.Update(color);
+            return new SuccessResult();
         }
     }
 }
