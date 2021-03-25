@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Helpers;
 using Core.Utilities.Results;
@@ -33,7 +36,8 @@ namespace Business.Concrete
             var result = _carImageDal.Get(p => p.CarId == id);
             return new SuccessDataResult<CarImage>(result);
         }
-
+        [SecuredOperation("carimage.add,admin")]
+        [ValidationAspect(typeof(CarImageValidator))]
         public IResult Add(IFormFile file,CarImage carImage)
         {
             var result = BusinessRules.Run(CheckIfImagesMoreThanLimit(carImage.CarId));
@@ -46,7 +50,6 @@ namespace Business.Concrete
             _carImageDal.Add(carImage);
             return new SuccessResult(Messages.EntityAdded);
         }
-
         private IResult CheckIfImagesMoreThanLimit(int carId)
         {
             var result = _carImageDal.GetAll(c=>c.CarId==carId).Count;
@@ -56,7 +59,7 @@ namespace Business.Concrete
             }
             return new SuccessResult(Messages.AddedCar);
         }
-
+        [SecuredOperation("carimage.delete,admin")]
         public IResult Delete(CarImage carImage)
         {
             var result = FileHelper.Delete(carImage.ImagePath);
@@ -67,7 +70,8 @@ namespace Business.Concrete
             _carImageDal.Delete(carImage);
             return new SuccessResult(Messages.EntityDeleted);
         }
-
+        [SecuredOperation("carimage.update,admin")]
+        [ValidationAspect(typeof(CarImageValidator))]
         public IResult Update(IFormFile file, CarImage carImage)
         {
             carImage.ImagePath = FileHelper.Update(_carImageDal.Get(c => c.Id == carImage.CarId).ImagePath, file);
