@@ -21,7 +21,7 @@ namespace Business.Concrete
         {
             _colorDal = colorDal;
         }
-        [SecuredOperation("color.add,admin")]
+        //[SecuredOperation("color.add,admin")]
         [ValidationAspect(typeof(ColorValidator))]
         public IResult Add(Color color)
         {
@@ -44,7 +44,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<Color>(_colorDal.Get(p => p.ColorId == ColorId));
         }
-        [SecuredOperation("color.update,admin")]
+        //[SecuredOperation("color.update,admin")]
         [ValidationAspect(typeof(ColorValidator))]
         public IResult Update(Color color)
         {
